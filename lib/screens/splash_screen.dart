@@ -97,9 +97,10 @@ class SplashScreen extends StatelessWidget {
                     Text(
                       game.translate('app_title'),
                       textAlign: TextAlign.center,
-                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.visible,
                       style: AppTextStyles.hero(
-                        fontSize: 40,
+                        fontSize: 32,
                         height: 0.95,
                       ),
                     ),
@@ -115,15 +116,10 @@ class SplashScreen extends StatelessWidget {
                 isLogo: true,
               ),
               const Spacer(flex: 4),
-              // Language Selector & CTA
+              // CTA
               animate(
                 Column(
                   children: [
-                    _LanguageSelector(
-                      current: game.language,
-                      onSelect: game.setLanguage,
-                    ),
-                    const SizedBox(height: 24),
                     GameButton(
                       label: game.translate('play'),
                       onTap: () => game.goTo(GamePhase.setup),
@@ -225,82 +221,6 @@ class _RuleRow extends StatelessWidget {
             child: Text(text, style: AppTextStyles.small(color: AppColors.muted)),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Language selector custom widget for Splash screen
-// ─────────────────────────────────────────────────────────────────────────────
-class _LanguageSelector extends StatelessWidget {
-  const _LanguageSelector({required this.current, required this.onSelect});
-
-  final String current;
-  final ValueChanged<String> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _LangChip(
-          label: 'ES 🇪🇸',
-          active: current == 'es',
-          onTap: () => onSelect('es'),
-        ),
-        const SizedBox(width: 8),
-        _LangChip(
-          label: 'EN 🇬🇧',
-          active: current == 'en',
-          onTap: () => onSelect('en'),
-        ),
-        const SizedBox(width: 8),
-        _LangChip(
-          label: 'DE 🇩🇪',
-          active: current == 'de',
-          onTap: () => onSelect('de'),
-        ),
-      ],
-    );
-  }
-}
-
-class _LangChip extends StatelessWidget {
-  const _LangChip({
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: active ? AppColors.primary.withValues(alpha: 0.12) : AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: active ? AppColors.primary.withValues(alpha: 0.5) : AppColors.border,
-            width: active ? 1.5 : 1,
-          ),
-        ),
-        child: Text(
-          label,
-          style: AppTextStyles.bodySemibold(
-            color: active ? AppColors.primary : AppColors.muted,
-          ).copyWith(fontSize: 12),
-        ),
       ),
     );
   }

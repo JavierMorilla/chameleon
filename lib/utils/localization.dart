@@ -1,6 +1,6 @@
 const Map<String, Map<String, String>> kLocalizations = {
   'es': {
-    'app_title': 'EL CAMALEÓN',
+    'app_title': 'CHAMELEON',
     'app_subtitle': 'Juego de deducción y mentiras',
     'play': 'Jugar',
     'rules_title': 'Cómo Jugar',
@@ -158,7 +158,7 @@ const Map<String, Map<String, String>> kLocalizations = {
     'cat_lugares': 'Places',
   },
   'de': {
-    'app_title': 'CHAMÄLEON',
+    'app_title': 'CHAMELEON',
     'app_subtitle': 'Ein Spiel der Deduktion und Lügen',
     'play': 'Spielen',
     'rules_title': 'Spielregeln',
