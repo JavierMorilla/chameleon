@@ -1,4 +1,4 @@
-package com.chameleon.partygame
+package com.javiermorilla.chameleon
 
 import io.flutter.embedding.android.FlutterActivity
 
