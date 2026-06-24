@@ -299,7 +299,7 @@ class _NameFieldState extends State<_NameField> {
       setState(() => _focused = widget.focusNode.hasFocus);
       if (!widget.focusNode.hasFocus) {
         final text = widget.controller.text.trim();
-        if (text.isNotEmpty) widget.onSubmit(text);
+        widget.onSubmit(text);
       }
     };
     widget.focusNode.addListener(_listener);
@@ -377,6 +377,12 @@ class _NameFieldState extends State<_NameField> {
               },
               onChanged: (v) => widget.onSubmit(v),
             ),
+          ),
+          const SizedBox(width: 8),
+          Icon(
+            Icons.mode_edit_outlined,
+            size: 16,
+            color: _focused ? AppColors.primary : AppColors.muted,
           ),
           const SizedBox(width: 16),
         ],

@@ -141,29 +141,38 @@ class GameState extends ChangeNotifier {
       players = players.sublist(0, clamped);
     }
     impostorCount = impostorCount.clamp(1, players.length - 1);
+    _saveConfig();
     notifyListeners();
   }
 
   void setImpostorCount(int count) {
     impostorCount = count.clamp(1, players.length - 1);
+    _saveConfig();
     notifyListeners();
   }
 
   void setPlayerName(int index, String name) {
     final trimmed = name.trim();
-    if (index < players.length && trimmed.isNotEmpty) {
-      players[index] = trimmed;
+    if (index < players.length) {
+      if (trimmed.isEmpty) {
+        players[index] = '${translate('default_player_prefix')} ${index + 1}';
+      } else {
+        players[index] = trimmed;
+      }
+      _saveConfig();
       notifyListeners();
     }
   }
 
   void setCategory(String cat) {
     category = cat;
+    _saveConfig();
     notifyListeners();
   }
 
   void setTimerSeconds(int secs) {
     timerSeconds = secs;
+    _saveConfig();
     notifyListeners();
   }
 
