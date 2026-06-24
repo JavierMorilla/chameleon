@@ -18,12 +18,6 @@ class SetupScreen extends StatelessWidget {
     final reducedMotion = MediaQuery.maybeOf(context)?.accessibleNavigation ?? false;
 
     final children = [
-      // Language Selector
-      _LanguageSelector(
-        current: game.language,
-        onSelect: game.setLanguage,
-      ),
-      const SizedBox(height: 24),
       // Players counter
       PlayerCounter(
         label: game.translate('players'),
@@ -577,81 +571,3 @@ class _ClueToggle extends StatelessWidget {
   }
 }
 
-class _LanguageSelector extends StatelessWidget {
-  const _LanguageSelector({required this.current, required this.onSelect});
-
-  final String current;
-  final ValueChanged<String> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.language_rounded, size: 16, color: AppColors.muted),
-            const SizedBox(width: 8),
-            Text(
-              'IDIOMA / LANGUAGE / SPRACHE',
-              style: AppTextStyles.label(color: AppColors.muted),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(child: _LangOption(label: 'Español 🇪🇸', code: 'es', active: current == 'es', onTap: () => onSelect('es'))),
-            const SizedBox(width: 8),
-            Expanded(child: _LangOption(label: 'English 🇬🇧', code: 'en', active: current == 'en', onTap: () => onSelect('en'))),
-            const SizedBox(width: 8),
-            Expanded(child: _LangOption(label: 'Deutsch 🇩🇪', code: 'de', active: current == 'de', onTap: () => onSelect('de'))),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _LangOption extends StatelessWidget {
-  const _LangOption({
-    required this.label,
-    required this.code,
-    required this.active,
-    required this.onTap,
-  });
-
-  final String label;
-  final String code;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        height: 48,
-        decoration: BoxDecoration(
-          color: active ? AppColors.primary.withValues(alpha: 0.12) : AppColors.surface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: active ? AppColors.primary.withValues(alpha: 0.5) : AppColors.border,
-            width: active ? 1.5 : 1,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: AppTextStyles.bodySemibold(
-            color: active ? AppColors.primary : AppColors.ink,
-          ).copyWith(fontSize: 13),
-        ),
-      ),
-    );
-  }
-}
