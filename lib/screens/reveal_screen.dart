@@ -222,7 +222,7 @@ class _RevealScreenState extends State<RevealScreen>
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeOut,
                             child: GameButton(
-                              label: isLast ? 'Comenzar ronda' : 'Ocultar y pasar',
+                              label: isLast ? game.translate('start_round') : game.translate('hide_and_pass'),
                               onTap: game.cardRevealed
                                   ? () {
                                       HapticFeedback.lightImpact();
@@ -342,7 +342,7 @@ class _CoverCardState extends State<_CoverCard>
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              'Toca para ver tu carta',
+                              context.watch<GameState>().translate('tap_to_see_card'),
                               style: AppTextStyles.small(color: AppColors.muted),
                             ),
                           ],
@@ -353,7 +353,7 @@ class _CoverCardState extends State<_CoverCard>
                         opacity: _readyToReveal ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 300),
                         child: Text(
-                          'Espera…',
+                          context.watch<GameState>().translate('wait_grace'),
                           style: AppTextStyles.small(color: AppColors.muted),
                         ),
                       ),
@@ -439,15 +439,16 @@ class _RoleCardState extends State<_RoleCard> {
 
   @override
   Widget build(BuildContext context) {
+    final game = context.watch<GameState>();
     final bgColor = widget.isImpostor
         ? const Color(0xFF1E1010) // very dark red tint for impostor
         : AppColors.surface;
     final labelColor = widget.isImpostor ? AppColors.primary : AppColors.tertiary;
-    final wordText = widget.isImpostor ? 'IMPOSTOR' : widget.word.toUpperCase();
+    final wordText = widget.isImpostor ? game.translate('role_chameleon') : widget.word.toUpperCase();
     final wordColor = widget.isImpostor ? AppColors.primary : AppColors.ink;
     final hint = widget.isImpostor
-        ? 'No tienes palabra.\nDescúbrela tú.'
-        : '¡Eres ciudadano!\nNo reveles tu palabra.';
+        ? game.translate('chameleon_hint')
+        : game.translate('citizen_hint');
 
     return Container(
       width: double.infinity,
@@ -482,7 +483,7 @@ class _RoleCardState extends State<_RoleCard> {
               border: Border.all(color: labelColor.withValues(alpha: 0.4)),
             ),
             child: Text(
-              widget.isImpostor ? 'IMPOSTOR' : 'CIUDADANO',
+              widget.isImpostor ? game.translate('role_chameleon') : game.translate('role_citizen'),
               style: AppTextStyles.label(color: labelColor),
             ),
           ),
@@ -576,7 +577,9 @@ class _ClueRevealButton extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              showClue ? 'Pista: $clue' : 'Ver pista',
+              showClue
+                  ? context.watch<GameState>().translate('clue_label', {'clue': clue})
+                  : context.watch<GameState>().translate('clue_reveal_btn'),
               style: AppTextStyles.small(
                 color: showClue ? AppColors.primary : AppColors.ink,
               ).copyWith(fontWeight: FontWeight.w600),

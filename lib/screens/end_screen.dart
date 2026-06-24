@@ -64,7 +64,7 @@ class _EndScreenState extends State<EndScreen>
     final game = context.watch<GameState>();
     final citizensWon = game.winner == 'ciudadanos';
     final winnerLabel =
-        citizensWon ? '¡Ganan los ciudadanos!' : '¡Gana el impostor!';
+        citizensWon ? game.translate('result_title_won') : game.translate('result_sub_impostor_won');
     final winnerColor = citizensWon ? AppColors.tertiary : AppColors.primary;
 
     return Scaffold(
@@ -112,25 +112,25 @@ class _EndScreenState extends State<EndScreen>
                           child: Column(
                             children: [
                               _StatRow(
-                                label: 'Rondas jugadas',
+                                label: game.translate('rounds_played'),
                                 value: '${game.roundNumber}',
                               ),
                               Divider(color: AppColors.border, height: 32),
                               _StatRow(
-                                label: 'Categoría',
-                                value: game.category,
+                                label: game.translate('category'),
+                                value: game.translateCategory(game.category),
                               ),
                               Divider(color: AppColors.border, height: 32),
                               _StatRow(
                                 label: game.impostorCount == 1
-                                    ? 'El impostor era'
-                                    : 'Los impostores eran',
+                                    ? game.translate('chameleon_was')
+                                    : game.translate('chameleons_were'),
                                 value: _impostorNames(game),
                                 valueColor: AppColors.primary,
                               ),
                               Divider(color: AppColors.border, height: 32),
                               _StatRow(
-                                label: 'La palabra secreta',
+                                label: game.translate('the_secret_word'),
                                 value: game.roundWord.toUpperCase(),
                                 valueColor: AppColors.tertiary,
                               ),
@@ -146,7 +146,7 @@ class _EndScreenState extends State<EndScreen>
                     child: Column(
                       children: [
                         GameButton(
-                          label: 'Jugar de nuevo',
+                          label: game.translate('play_again'),
                           onTap: () {
                             HapticFeedback.mediumImpact();
                             game.playAgainSameConfig();
@@ -154,7 +154,7 @@ class _EndScreenState extends State<EndScreen>
                         ),
                         const SizedBox(height: 12),
                         GameButton(
-                          label: 'Nueva partida',
+                          label: game.translate('new_game'),
                           color: AppColors.surface,
                           textColor: AppColors.muted,
                           onTap: () {

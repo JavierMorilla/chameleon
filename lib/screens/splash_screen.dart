@@ -12,7 +12,7 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final game = context.read<GameState>();
+    final game = context.watch<GameState>();
     final reducedMotion = MediaQuery.maybeOf(context)?.accessibleNavigation ?? false;
 
     Widget animate(Widget child, Duration delay, {double slideBegin = 0.04, bool isLogo = false}) {
@@ -55,7 +55,7 @@ class SplashScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 16, right: 4),
                       child: Semantics(
                         button: true,
-                        label: 'Cómo jugar',
+                        label: game.translate('rules_title'),
                         child: Container(
                           width: 44,
                           height: 44,
@@ -95,7 +95,7 @@ class SplashScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'CHAMELEON',
+                      game.translate('app_title'),
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.visible,
@@ -106,8 +106,9 @@ class SplashScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Camúflate mejor que el resto.',
+                      game.translate('app_subtitle'),
                       style: AppTextStyles.body(color: AppColors.muted),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -120,7 +121,7 @@ class SplashScreen extends StatelessWidget {
                 Column(
                   children: [
                     GameButton(
-                      label: 'Empezar',
+                      label: game.translate('play'),
                       onTap: () => game.goTo(GamePhase.setup),
                     ),
                     const SizedBox(height: 32),
@@ -144,6 +145,7 @@ class _RulesSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final game = context.watch<GameState>();
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
@@ -162,26 +164,26 @@ class _RulesSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Cómo jugar', style: AppTextStyles.heading()),
+            Text(game.translate('rules_title'), style: AppTextStyles.heading()),
             const SizedBox(height: 20),
             _RuleRow(
               number: '1',
-              text: 'Cada jugador ve su carta en secreto. La mayoria tiene una palabra común — los impostores, ninguna.',
+              text: game.translate('rules_step_1'),
               color: AppColors.tertiary,
             ),
             _RuleRow(
               number: '2',
-              text: 'Hablad sobre la palabra sin decirla directamente. El impostor intenta pasar desapercibido.',
+              text: game.translate('rules_step_2'),
               color: AppColors.accent,
             ),
             _RuleRow(
               number: '3',
-              text: 'Votad en grupo quién creéis que es el impostor. Eliminar a un impostor da la victoria a los ciudadanos.',
+              text: game.translate('rules_step_3'),
               color: AppColors.primary,
             ),
             _RuleRow(
               number: '4',
-              text: 'El impostor gana si un ciudadano es eliminado, o si adivina la palabra antes de ser descubierto.',
+              text: game.translate('rules_step_4'),
               color: AppColors.muted,
             ),
           ],

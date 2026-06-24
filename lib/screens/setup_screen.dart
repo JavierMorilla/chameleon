@@ -18,9 +18,15 @@ class SetupScreen extends StatelessWidget {
     final reducedMotion = MediaQuery.maybeOf(context)?.accessibleNavigation ?? false;
 
     final children = [
+      // Language Selector
+      _LanguageSelector(
+        current: game.language,
+        onSelect: game.setLanguage,
+      ),
+      const SizedBox(height: 24),
       // Players counter
       PlayerCounter(
-        label: 'Jugadores',
+        label: game.translate('players'),
         value: game.players.length,
         min: 3,
         max: 12,
@@ -33,7 +39,7 @@ class SetupScreen extends StatelessWidget {
       const SizedBox(height: 24),
       // Impostors counter
       PlayerCounter(
-        label: 'Impostores',
+        label: game.translate('impostors'),
         value: game.impostorCount,
         min: 1,
         max: (game.players.length - 1).clamp(1, 11),
@@ -45,10 +51,10 @@ class SetupScreen extends StatelessWidget {
       ),
       const SizedBox(height: 32),
       // Player names
-      Text('NOMBRES', style: AppTextStyles.label()),
+      Text(game.translate('names_title'), style: AppTextStyles.label()),
       const SizedBox(height: 4),
       Text(
-        'Escribe los nombres del grupo',
+        game.translate('names_subtitle'),
         style: AppTextStyles.small(color: AppColors.muted),
       ),
       const SizedBox(height: 12),
@@ -58,7 +64,7 @@ class SetupScreen extends StatelessWidget {
       ),
       const SizedBox(height: 32),
       // Category selector
-      Text('CATEGORÍA', style: AppTextStyles.label()),
+      Text(game.translate('category'), style: AppTextStyles.label()),
       const SizedBox(height: 12),
       _CategoryGrid(
         categories: game.categories,
@@ -67,7 +73,7 @@ class SetupScreen extends StatelessWidget {
       ),
       const SizedBox(height: 24),
       // Timer selector
-      Text('TIEMPO DE RONDA', style: AppTextStyles.label()),
+      Text(game.translate('round_time'), style: AppTextStyles.label()),
       const SizedBox(height: 12),
       _TimerSelector(
         current: game.timerSeconds,
@@ -90,14 +96,14 @@ class SetupScreen extends StatelessWidget {
             border: Border.all(color: AppColors.border),
           ),
           child: Text(
-            'Mínimo 3 jugadores y menos impostores que jugadores.',
+            game.translate('validation_msg'),
             style: AppTextStyles.small(color: AppColors.muted),
           ),
         ),
         const SizedBox(height: 16),
       ],
       GameButton(
-        label: '¡Empezar!',
+        label: game.translate('start'),
         onTap: canStart
             ? () {
                 HapticFeedback.heavyImpact();
@@ -352,7 +358,7 @@ class _NameFieldState extends State<_NameField> {
               focusNode: widget.focusNode,
               style: AppTextStyles.bodyMedium(),
               decoration: InputDecoration(
-                hintText: 'Jugador ${widget.index + 1}',
+                hintText: '${context.watch<GameState>().translate('default_player_prefix')} ${widget.index + 1}',
                 hintStyle: AppTextStyles.bodyMedium(color: AppColors.muted),
                 border: InputBorder.none,
                 isDense: true,
@@ -430,7 +436,7 @@ class _CategoryGrid extends StatelessWidget {
                 Text(icon, style: const TextStyle(fontSize: 14)),
                 const SizedBox(width: 6),
                 Text(
-                  cat,
+                  context.watch<GameState>().translateCategory(cat),
                   style: AppTextStyles.small(
                     color: isSelected ? AppColors.onPrimary : AppColors.ink,
                   ).copyWith(fontWeight: FontWeight.w500),
@@ -503,10 +509,11 @@ class _ClueToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final game = context.watch<GameState>();
     return Semantics(
       button: true,
       checked: enabled,
-      label: 'Pistas para el impostor',
+      label: game.translate('clues_toggle'),
       child: GestureDetector(
         onTap: () {
           HapticFeedback.selectionClick();
@@ -530,12 +537,12 @@ class _ClueToggle extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Pistas para el impostor',
+                      game.translate('clues_toggle'),
                       style: AppTextStyles.bodySemibold(color: AppColors.ink),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'El impostor puede ver una pista sobre la palabra secreta.',
+                      game.translate('clues_toggle_subtitle'),
                       style: AppTextStyles.small(color: AppColors.muted),
                     ),
                   ],
@@ -564,6 +571,85 @@ class _ClueToggle extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LanguageSelector extends StatelessWidget {
+  const _LanguageSelector({required this.current, required this.onSelect});
+
+  final String current;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.language_rounded, size: 16, color: AppColors.muted),
+            const SizedBox(width: 8),
+            Text(
+              'IDIOMA / LANGUAGE / SPRACHE',
+              style: AppTextStyles.label(color: AppColors.muted),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(child: _LangOption(label: 'Español 🇪🇸', code: 'es', active: current == 'es', onTap: () => onSelect('es'))),
+            const SizedBox(width: 8),
+            Expanded(child: _LangOption(label: 'English 🇬🇧', code: 'en', active: current == 'en', onTap: () => onSelect('en'))),
+            const SizedBox(width: 8),
+            Expanded(child: _LangOption(label: 'Deutsch 🇩🇪', code: 'de', active: current == 'de', onTap: () => onSelect('de'))),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _LangOption extends StatelessWidget {
+  const _LangOption({
+    required this.label,
+    required this.code,
+    required this.active,
+    required this.onTap,
+  });
+
+  final String label;
+  final String code;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        height: 48,
+        decoration: BoxDecoration(
+          color: active ? AppColors.primary.withValues(alpha: 0.12) : AppColors.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: active ? AppColors.primary.withValues(alpha: 0.5) : AppColors.border,
+            width: active ? 1.5 : 1,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: AppTextStyles.bodySemibold(
+            color: active ? AppColors.primary : AppColors.ink,
+          ).copyWith(fontSize: 13),
         ),
       ),
     );

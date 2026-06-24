@@ -116,12 +116,12 @@ class _ResultScreenState extends State<ResultScreen>
     // Show original by reconstructing from game state history isn't available,
     // but the word reveal and the eliminated player name is the key moment.
     final accentColor = wasImpostor ? AppColors.tertiary : AppColors.primary;
-    final resultTitle = wasImpostor ? '¡Era el impostor!' : '¡Se salvó el impostor!';
+    final resultTitle = wasImpostor ? game.translate('result_title_won') : game.translate('result_title_lost');
     final resultSub = wasImpostor
-        ? 'Los ciudadanos han ganado esta ronda.'
+        ? game.translate('result_sub_won')
         : (game.winner == 'impostor'
-            ? '¡El impostor ha ganado la partida!'
-            : 'El impostor sigue entre vosotros…');
+            ? game.translate('result_sub_impostor_won')
+            : game.translate('result_sub_lost'));
     final remainingImpostors = game.impostorIndices
         .map((i) => game.players[i])
         .join(', ');
@@ -188,7 +188,7 @@ class _ResultScreenState extends State<ResultScreen>
                           ),
                         ),
                         child: Text(
-                          wasImpostor ? 'ERA EL IMPOSTOR' : 'ERA CIUDADANO',
+                          wasImpostor ? game.translate('era_chameleon') : game.translate('era_citizen'),
                           style: AppTextStyles.label(
                             color: wasImpostor ? AppColors.primary : AppColors.tertiary,
                           ),
@@ -220,7 +220,7 @@ class _ResultScreenState extends State<ResultScreen>
                       // Actions
                       if (game.winner == 'continua') ...[
                         GameButton(
-                          label: 'Siguiente ronda',
+                          label: game.translate('next_round'),
                           onTap: () {
                             HapticFeedback.mediumImpact();
                             game.nextDiscussionRound();
@@ -228,7 +228,7 @@ class _ResultScreenState extends State<ResultScreen>
                         ),
                       ] else ...[
                         GameButton(
-                          label: 'Nueva partida',
+                          label: game.translate('new_game'),
                           onTap: () {
                             HapticFeedback.mediumImpact();
                             game.playAgainSameConfig();
@@ -237,7 +237,7 @@ class _ResultScreenState extends State<ResultScreen>
                       ],
                       const SizedBox(height: 12),
                       GameButton(
-                        label: 'Fin de partida',
+                        label: game.translate('finish_game'),
                         color: AppColors.surface,
                         textColor: AppColors.muted,
                         onTap: () {
@@ -352,11 +352,14 @@ class _InfoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _InfoRow(label: 'La palabra era', value: word.toUpperCase()),
+          _InfoRow(
+            label: context.watch<GameState>().translate('secret_word_was'),
+            value: word.toUpperCase(),
+          ),
           if (remainingImpostors != null) ...[
             const SizedBox(height: 12),
             _InfoRow(
-              label: 'Impostores restantes',
+              label: context.watch<GameState>().translate('remaining_chameleons'),
               value: remainingImpostors!,
               valueColor: AppColors.primary,
             ),

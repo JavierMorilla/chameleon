@@ -1,8 +1,10 @@
 import 'dart:math';
+import 'dart:ui';
 // ignore_for_file: prefer_final_fields
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'word_bank.dart';
+import '../utils/localization.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GamePhase
@@ -17,6 +19,7 @@ const _kImpostorCount  = 'cfg_impostor_count';
 const _kCategory       = 'cfg_category';
 const _kTimerSeconds   = 'cfg_timer_seconds';
 const _kShowClues      = 'cfg_show_clues';
+const _kLanguage       = 'cfg_language';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GameState — single source of truth, ChangeNotifier
@@ -28,6 +31,33 @@ class GameState extends ChangeNotifier {
   String category      = 'General';
   int timerSeconds     = 180;
   bool showCluesEnabled = true;
+  String language      = 'es';
+
+  // ── Localization Helpers ─────────────────────────────────────────────────────
+  String translate(String key, [Map<String, String>? args]) {
+    return translateWith(language, key, args);
+  }
+
+  String translateCategory(String cat) {
+    switch (cat) {
+      case 'Cine': return translate('cat_cine');
+      case 'Comida': return translate('cat_comida');
+      case 'Animales': return translate('cat_animales');
+      case 'Deportes': return translate('cat_deportes');
+      case 'Lugares': return translate('cat_lugares');
+      case 'General':
+      default:
+        return translate('cat_general');
+    }
+  }
+
+  void setLanguage(String lang) {
+    if (lang == 'es' || lang == 'en' || lang == 'de') {
+      language = lang;
+      _saveConfig();
+      notifyListeners();
+    }
+  }
 
   // ── Runtime ─────────────────────────────────────────────────────────────────
   GamePhase phase           = GamePhase.splash;
@@ -72,6 +102,11 @@ class GameState extends ChangeNotifier {
       category = kWordBank.containsKey(savedCat) ? savedCat : 'General';
       timerSeconds = prefs.getInt(_kTimerSeconds) ?? 180;
       showCluesEnabled = prefs.getBool(_kShowClues) ?? true;
+      
+      final sysLang = PlatformDispatcher.instance.locale.languageCode;
+      final defaultLang = (sysLang == 'de' || sysLang == 'en') ? sysLang : 'es';
+      language = prefs.getString(_kLanguage) ?? defaultLang;
+
       notifyListeners();
     } catch (_) {
       // Fail silently — defaults are fine
@@ -86,6 +121,7 @@ class GameState extends ChangeNotifier {
       await prefs.setString(_kCategory, category);
       await prefs.setInt(_kTimerSeconds, timerSeconds);
       await prefs.setBool(_kShowClues, showCluesEnabled);
+      await prefs.setString(_kLanguage, language);
     } catch (_) {
       // Fail silently — game still works without persistence
     }
@@ -99,7 +135,7 @@ class GameState extends ChangeNotifier {
     if (clamped == players.length) return;
     if (clamped > players.length) {
       for (int i = players.length; i < clamped; i++) {
-        players.add('Jugador ${i + 1}');
+        players.add('${translate('default_player_prefix')} ${i + 1}');
       }
     } else {
       players = players.sublist(0, clamped);
@@ -151,7 +187,8 @@ class GameState extends ChangeNotifier {
     final indices = List.generate(players.length, (i) => i)..shuffle(rng);
     impostorIndices = indices.sublist(0, impostorCount);
 
-    final words = kWordBank[category] ?? kWordBank['General']!;
+    final wordsBank = getWordBank(language);
+    final words = wordsBank[category] ?? wordsBank['General']!;
     final selectedGameWord = words[rng.nextInt(words.length)];
     roundWord = selectedGameWord.word;
     roundClue = selectedGameWord.clue;

@@ -91,7 +91,7 @@ class _TimerScreenState extends State<TimerScreen>
               padding: const EdgeInsets.fromLTRB(24, 16, 16, 0),
               child: Row(
                 children: [
-                  Text('DISCUSIÓN', style: AppTextStyles.label()),
+                  Text(game.translate('timer_title'), style: AppTextStyles.label()),
                   const Spacer(),
                   const GameExitButton(),
                 ],
@@ -166,7 +166,7 @@ class _TimerScreenState extends State<TimerScreen>
                             builder: (_, __) {
                               final textChild = Text(
                                 _remaining <= 0
-                                    ? '¡Tiempo!'
+                                    ? game.translate('time_up')
                                     : _formatTime(_remaining),
                                 key: ValueKey(_remaining),
                                 style: _remaining <= 0
@@ -202,7 +202,7 @@ class _TimerScreenState extends State<TimerScreen>
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      _paused ? 'EN PAUSA' : 'DEBATID',
+                      _paused ? game.translate('timer_paused') : game.translate('timer_running'),
                       style: AppTextStyles.label(),
                     ),
                     const Spacer(flex: 2),
@@ -233,7 +233,7 @@ class _TimerScreenState extends State<TimerScreen>
                         Expanded(
                           flex: 2,
                           child: GameButton(
-                            label: '¡A votar!',
+                            label: game.translate('vote_btn'),
                             onTap: () {
                               _ticker?.cancel();
                               HapticFeedback.mediumImpact();
@@ -295,7 +295,7 @@ class _PressableButtonState extends State<_PressableButton>
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Pausar o reanudar discusión',
+      label: context.watch<GameState>().translate('timer_paused'),
       child: GestureDetector(
         onTapDown: (_) => _ctrl.forward(),
         onTapUp: (_) {

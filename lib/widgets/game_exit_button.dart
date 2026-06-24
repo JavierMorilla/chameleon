@@ -13,9 +13,10 @@ class GameExitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final game = context.watch<GameState>();
     return Semantics(
       button: true,
-      label: 'Opciones de partida',
+      label: game.translate('exit_options_title'),
       child: GestureDetector(
         onTap: () => _showExitSheet(context),
         behavior: HitTestBehavior.opaque,
@@ -49,7 +50,7 @@ class _ExitSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final game = context.read<GameState>();
+    final game = context.watch<GameState>();
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
@@ -69,16 +70,16 @@ class _ExitSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Opciones de partida', style: AppTextStyles.subheading()),
+            Text(game.translate('exit_options_title'), style: AppTextStyles.subheading()),
             const SizedBox(height: 6),
             Text(
-              'La partida continúa hasta que salgas.',
+              game.translate('exit_options_sub'),
               style: AppTextStyles.small(color: AppColors.muted),
             ),
             const SizedBox(height: 20),
             // Ver configuración
             _SheetButton(
-              label: 'Ver configuración',
+              label: game.translate('view_config'),
               icon: Icons.info_outline_rounded,
               color: AppColors.muted,
               onTap: () {
@@ -96,7 +97,7 @@ class _ExitSheet extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             _SheetButton(
-              label: 'Abandonar la partida',
+              label: game.translate('abandon_game'),
               icon: Icons.exit_to_app_rounded,
               color: AppColors.primary,
               onTap: () {
@@ -107,7 +108,7 @@ class _ExitSheet extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             _SheetButton(
-              label: 'Continuar jugando',
+              label: game.translate('continue_playing'),
               icon: Icons.close_rounded,
               color: AppColors.ink,
               onTap: () => Navigator.of(context).pop(),
@@ -184,7 +185,7 @@ class _ConfigSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Configuración', style: AppTextStyles.heading()),
+            Text(game.translate('config_title'), style: AppTextStyles.heading()),
             const SizedBox(height: 20),
             Flexible(
               child: SingleChildScrollView(
@@ -199,20 +200,20 @@ class _ConfigSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _ConfigRow(label: 'Jugadores', value: '${game.players.length}'),
+                      _ConfigRow(label: game.translate('players'), value: '${game.players.length}'),
                       const SizedBox(height: 12),
-                      _ConfigRow(label: 'Impostores', value: '${game.impostorCount}'),
+                      _ConfigRow(label: game.translate('impostors'), value: '${game.impostorCount}'),
                       const SizedBox(height: 12),
-                      _ConfigRow(label: 'Categoría', value: game.category),
+                      _ConfigRow(label: game.translate('category'), value: game.translateCategory(game.category)),
                       const SizedBox(height: 12),
                       _ConfigRow(
-                        label: 'Tiempo',
+                        label: game.translate('time_label'),
                         value: _formatTime(game.timerSeconds),
                       ),
                       const SizedBox(height: 16),
                       Divider(color: AppColors.border),
                       const SizedBox(height: 12),
-                      Text('JUGADORES', style: AppTextStyles.label()),
+                      Text(game.translate('names_title'), style: AppTextStyles.label()),
                       const SizedBox(height: 10),
                       Wrap(
                         spacing: 8,
@@ -249,7 +250,7 @@ class _ConfigSheet extends StatelessWidget {
                   border: Border.all(color: AppColors.border),
                 ),
                 alignment: Alignment.center,
-                child: Text('Cerrar', style: AppTextStyles.bodySemibold(color: AppColors.muted)),
+                child: Text(game.translate('close'), style: AppTextStyles.bodySemibold(color: AppColors.muted)),
               ),
             ),
           ],

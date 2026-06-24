@@ -28,15 +28,15 @@ class VoteScreen extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('VOTACIÓN', style: AppTextStyles.label()),
+                      Text(game.translate('vote_title'), style: AppTextStyles.label()),
                       const SizedBox(height: 8),
                       Text(
-                        '¿Quién es el impostor?',
+                        game.translate('vote_subtitle'),
                         style: AppTextStyles.heading(),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        '¿Quién está mintiendo?',
+                        game.translate('vote_question'),
                         style: AppTextStyles.small(color: AppColors.muted),
                       ),
                     ],
@@ -84,8 +84,8 @@ class VoteScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
               child: GameButton(
                 label: hasVote
-                    ? 'Eliminar a ${game.players[game.votedPlayerIndex!]}'
-                    : 'Selecciona un sospechoso',
+                    ? game.translate('eliminate_player', {'name': game.players[game.votedPlayerIndex!]})
+                    : game.translate('select_suspect'),
                 onTap: hasVote
                     ? () {
                         HapticFeedback.heavyImpact();

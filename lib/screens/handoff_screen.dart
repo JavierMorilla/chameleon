@@ -48,7 +48,7 @@ class HandoffScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(24, 16, 16, 0),
               child: Row(
                 children: [
-                  Text('RONDA', style: AppTextStyles.label()),
+                  Text(game.translate('round_label'), style: AppTextStyles.label()),
                   const Spacer(),
                   const GameExitButton(),
                 ],
@@ -79,7 +79,7 @@ class HandoffScreen extends StatelessWidget {
                         // "Pasa el móvil a"
                         animate(
                           Text(
-                            'Pasa el móvil a',
+                            game.translate('pass_phone_to'),
                             style: AppTextStyles.body(color: AppColors.muted),
                           ),
                           80.ms,
@@ -98,7 +98,10 @@ class HandoffScreen extends StatelessWidget {
                               border: Border.all(color: AppColors.border),
                             ),
                             child: Text(
-                              'Turno $current de $total',
+                              game.translate('turn_progress', {
+                                'current': '$current',
+                                'total': '$total',
+                              }),
                               style: AppTextStyles.label(),
                             ),
                           ),
@@ -107,7 +110,7 @@ class HandoffScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         animate(
                           Text(
-                            'Que el resto mire para otro lado.',
+                            game.translate('others_look_away'),
                             style: AppTextStyles.small(color: AppColors.muted),
                           ),
                           320.ms,
@@ -115,7 +118,7 @@ class HandoffScreen extends StatelessWidget {
                         const Spacer(flex: 3),
                         animate(
                           GameButton(
-                            label: 'Ver mi carta',
+                            label: game.translate('see_my_card'),
                             onTap: () {
                               HapticFeedback.mediumImpact();
                               game.showReveal();
